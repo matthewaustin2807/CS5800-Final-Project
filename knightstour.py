@@ -1,11 +1,31 @@
-# Theresa Fu-Hsing Hsu
+# Theresa Fu-Hsing Hsu, Matthew Chandra
 # CS5800
 # Summer 2024
 # Bruce Maxwell
 # Knight's Tour problem using backtracking in Python.
 
 import sys
+import tkinter as tk
+from gui import ChessBoard, squareSize
 
+def visualize_algorithm(all_knight_moves, n, m):
+    """Visualize the Knights Tour Algorithm using Tkinter
+
+    Args:
+        all_knight_moves (list): A list of coordinates of all of the knight's move in order from the starting position
+        n (int): Number of Rows on the Board
+        m (int): Number of Columns on the Board
+    """
+    root = tk.Tk()
+    root.title(f"Knight's Tour Visualization")
+    root.minsize(width=squareSize*m+100, height=squareSize*n+100)
+    root.configure(background="papaya whip")
+    
+    chessBoard = ChessBoard(n, m, root,all_knight_moves)
+    chessBoard.runVisualization()
+    
+    root.mainloop()
+    
 # Function to check if (x, y) is a valid move for the knight
 def is_valid_move(x, y, board, N, M):
     """Check if the move to position (x, y) is valid.
@@ -31,7 +51,7 @@ def count_valid_moves(x, y, board, N, M, x_move, y_move):
     return count
 
 # Recursive function to solve the Knight's Tour problem
-def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move):
+def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_moves):
     """Recursively solve the Knight's Tour problem using Warnsdorff's heuristic.
     
     Args:
@@ -67,7 +87,8 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move):
     for _, next_x, next_y in possible_moves:
         board[next_x][next_y] = move_i
         print("Move {}: ({}, {})".format(move_i, next_x, next_y))  # Debugging statement
-        if solve_knights_tour(next_x, next_y, move_i + 1, board, N, M, x_move, y_move):
+        all_knight_moves.append([next_x, next_y])
+        if solve_knights_tour(next_x, next_y, move_i + 1, board, N, M, x_move, y_move, all_knight_moves):
             return True
         # Backtracking
         board[next_x][next_y] = -1
@@ -76,7 +97,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move):
     return False
 
 # Function to initialize and solve the Knight's Tour problem
-def knights_tour(N, M, start_x=0, start_y=0):
+def knights_tour(N, M, visualize, start_x=0, start_y=0):
     """Initialize the board and start the Knight's Tour.
     
     Args:
@@ -90,15 +111,18 @@ def knights_tour(N, M, start_x=0, start_y=0):
     board = [[-1 for _ in range(M)] for _ in range(N)]
     # Initial position of the knight
     board[start_x][start_y] = 0
-
+    all_knight_moves = [[start_x, start_y]]
     # All possible moves for the knight
     x_move = [2, 1, -1, -2, -2, -1, 1, 2]
     y_move = [1, 2, 2, 1, -1, -2, -2, -1]
 
-    if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move):
+    if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
     else:
         print_solution(board, N, M)
+        if visualize:
+            print("Solution Exists, Visualizing...")
+            visualize_algorithm(all_knight_moves, N, M)
 
 # Function to print the solution board
 def print_solution(board, N, M):
@@ -117,18 +141,19 @@ def print_solution(board, N, M):
 # Main function to handle command-line input and start the knight's tour
 def main():
     """Main function to parse command-line arguments and start the Knight's Tour."""
-    if len(sys.argv) < 5:
-        print("Usage: python knightstour.py <rows> <cols> <start_x> <start_y>")
+    if len(sys.argv) < 6:
+        print("Usage: python knightstour.py <rows> <cols> <start_x> <start_y> <0 for no Visualization, 1 for Visualization>")
         sys.exit(1)
 
     N = int(sys.argv[1])
     M = int(sys.argv[2])
     x = int(sys.argv[3])
     y = int(sys.argv[4])
-
+    visualization = True if int(sys.argv[5]) == 1 else False
+    
     print("Board size: {}x{}, Starting position: ({}, {})".format(N, M, x, y))
 
-    knights_tour(N, M, x, y)
+    knights_tour(N, M, visualization, x, y )
 
 if __name__ == "__main__":
     main()
