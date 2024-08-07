@@ -17,15 +17,15 @@ def visualize_algorithm(all_knight_moves, n, m):
         m (int): Number of Columns on the Board
     """
     root = tk.Tk()
-    root.title(f"Knight's Tour Visualization")
-    root.minsize(width=squareSize*m+100, height=squareSize*n+100)
+    root.title("Knight's Tour Visualization")
+    root.minsize(width=squareSize * m + 100, height=squareSize * n + 100)
     root.configure(background="papaya whip")
     
-    chessBoard = ChessBoard(n, m, root,all_knight_moves)
+    chessBoard = ChessBoard(n, m, root, all_knight_moves)
     chessBoard.runVisualization()
     
     root.mainloop()
-    
+
 # Function to check if (x, y) is a valid move for the knight
 def is_valid_move(x, y, board, N, M):
     """Check if the move to position (x, y) is valid.
@@ -153,7 +153,7 @@ def main():
     
     print("Board size: {}x{}, Starting position: ({}, {})".format(N, M, x, y))
 
-    knights_tour(N, M, visualization, x, y )
+    knights_tour(N, M, visualization, x, y)
 
 if __name__ == "__main__":
     main()

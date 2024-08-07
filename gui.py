@@ -1,7 +1,8 @@
-# Matthew Chandra
+# Matthew Chandra, Theresa Fu-Hsing Hsu
 # CS5800 Final Project
+# Summer 2024
+# Bruce Maxwell
 # Visualization Program for Knight's Tour with Backtracking
-# 8/5/2024
 
 import tkinter as tk
 import time
@@ -12,8 +13,7 @@ squareSize = 50
 # example_input = [[0, 0], [1, 2], [0, 4], [2, 3], [4, 4], [3, 2], [4, 0], [2, 1], [0, 2], [1, 0], [3, 1], [4, 3], [2, 4], [0, 3], [1, 1], [3, 0], [4, 2], [3, 4], [1, 3], [0, 1], [2, 0], [4, 1], [2, 2], [1, 4], [3, 3]]
 
 class ChessBoard():
-    """ChessBoard class which will generate a chess board of a given size and start the Knight's Tour visualization
-    """
+    """ChessBoard class which will generate a chess board of a given size and start the Knight's Tour visualization"""
     
     # Individual Chess Board Square Size
     squareSize = squareSize
@@ -30,14 +30,13 @@ class ChessBoard():
         self.rows = rows
         self.columns = columns
         self.root = root
-        self.board_status = [[0 for _ in range(self.columns)] for _ in range(self.rows)] 
+        self.board_status = [[0 for _ in range(self.columns)] for _ in range(self.rows)]
         self.buttonPress = 0
         self.buttons = {}
         self.all_knight_moves = all_knight_moves
         
     def populateButtons(self):
-        """Populate an area on the Tkinter Window for Clickable Buttons to Start, Restart or Quit the Visualization
-        """
+        """Populate an area on the Tkinter Window for Clickable Buttons to Start, Restart or Quit the Visualization"""
         
         # Frame for Buttons
         buttonsArea = Frame(master=self.root, height=200, width=200, pady=25, padx=25)
@@ -45,7 +44,7 @@ class ChessBoard():
         buttonsArea.pack(side=BOTTOM)
         
         # Next Button
-        nextButton = Button(master=buttonsArea, text="Start", command=self.fillGrids,borderwidth=3, relief=RAISED, width=10, height=2, bg='SeaGreen2')
+        nextButton = Button(master=buttonsArea, text="Start", command=self.fillGrids, borderwidth=3, relief=RAISED, width=10, height=2, bg='SeaGreen2')
         nextButton.grid(row=0, column=0, sticky='nsew')
         self.buttons['start'] = nextButton
         
@@ -60,9 +59,8 @@ class ChessBoard():
         self.buttons['quit'] = quitButton
             
     def populateGrids(self):
-        """Populate the ChessBoard with the correct number of Squares based on the passed in Rows and Columns
-        """
-        # Chess Board Colors
+        """Populate the ChessBoard with the correct number of Squares based on the passed in Rows and Columns"""
+        
         def boardColor(i, j):
             if i % 2 == 0:
                 if j % 2 == 0:
@@ -76,13 +74,20 @@ class ChessBoard():
                     return 'bisque4'
 
         # Main Title
-        title = Label(master=self.root, pady=15, text=f"Knight's Tour Visualization on a {self.rows}x{self.columns} board starting at ({self.all_knight_moves[0][0]}, {self.all_knight_moves[0][1]})", font=('bold'),
-                      padx=15)
+        title = Label(
+            master=self.root,
+            pady=15,
+            text="Knight's Tour Visualization on a {}x{} board starting at ({}, {})".format(
+                self.rows, self.columns, self.all_knight_moves[0][0], self.all_knight_moves[0][1]
+            ),
+            font=('bold'),
+            padx=15
+        )
         title['bg'] = title.master['bg']
         title.pack(side=TOP)
         
         # Board Frame to hold the Squares
-        board = Frame(self.root, height=self.squareSize * self.rows, width=self.squareSize*self.columns, pady=15)
+        board = Frame(self.root, height=self.squareSize * self.rows, width=self.squareSize * self.columns, pady=15)
         board['bg'] = board.master['bg']
         board.pack()
         
@@ -100,7 +105,7 @@ class ChessBoard():
                 # Prevent Frame Auto Resizing
                 frame.pack_propagate(False)
                 
-                frame.grid(row=i, column=j, sticky='nsew') 
+                frame.grid(row=i, column=j, sticky='nsew')
                 self.board_status[i][j] = frame
     
     def loadImage(self, filename):
@@ -117,8 +122,8 @@ class ChessBoard():
         return ImageTk.PhotoImage(image)
 
     def fillGrids(self):  
-        """Fills in the grids one at a time based on the passed in knight's move
-        """
+        """Fills in the grids one at a time based on the passed in knight's move"""
+        
         icon = self.loadImage('knight.png')
         
         # Disable Start Button
@@ -126,7 +131,7 @@ class ChessBoard():
         prevGrid = None
         
         # Mark Knight's Move Frame by Frame
-        while self.buttonPress < self.rows*self.columns:
+        while self.buttonPress < self.rows * self.columns:
             # Label previous move as an X on the board
             if prevGrid is not None:
                 image_label.destroy()
@@ -162,13 +167,11 @@ class ChessBoard():
         done_label.pack()
     
     def quitProgram(self):
-        """Quits the Visualization Program
-        """
+        """Quits the Visualization Program"""
         self.root.destroy()
     
     def restartProgram(self):
-        """Restarts the Visualization
-        """
+        """Restarts the Visualization"""
         for widget in self.root.winfo_children():
             widget.destroy()
         self.buttons.clear()
@@ -176,8 +179,7 @@ class ChessBoard():
         self.runVisualization()
         
     def runVisualization(self):
-        """Runs the Visualization Program
-        """
+        """Runs the Visualization Program"""
         self.populateGrids()
         self.populateButtons()
 
@@ -193,6 +195,5 @@ class ChessBoard():
     
 #     root.mainloop()
 
-    
 # if __name__ == "__main__":
 #     main()
