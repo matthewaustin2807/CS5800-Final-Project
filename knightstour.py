@@ -9,6 +9,8 @@ import time
 import tkinter as tk
 import random
 
+from matplotlib import pyplot as plt
+
 from gui import ChessBoard, squareSize
 
 def visualize_algorithm(all_knight_moves, n, m):
@@ -147,45 +149,68 @@ def print_solution(board, N, M):
         sys.stdout.write("\n")
 
 
+# Function to analyze and plot running time
 def analyze_knights_tour(N, M, visualize, x, y, runs=10):
-    """Analyze the Knight's Tour by running it multiple times and measuring execution time.
+    """Analyze the Knight's Tour by running multiple trials and plotting the timing results.
 
     Args:
         N (int): The number of rows of the board.
         M (int): The number of columns of the board.
-        visualize (bool): Whether to visualize the solution or not.
-        x (int): The starting x-coordinate of the knight.
-        y (int): The starting y-coordinate of the knight.
-        runs (int): The number of runs for timing analysis (default 10).
+        visualize (bool): Flag indicating whether to visualize the knight's tour.
+        x (int): The x-coordinate of the starting position (not used in this analysis).
+        y (int): The y-coordinate of the starting position (not used in this analysis).
+        runs (int): The number of runs to perform (default is 10).
+
+    This function performs multiple runs of the Knight's Tour from random starting points,
+    collects the timing results, and visualizes the execution times against the starting points.
+    It also prints the sorted timings for each run, including the starting point and board size.
     """
     timings = []
     unique_starting_points = set()
 
-    # Pick random different starting points on the same board size
+    # Pick random unique starting points
     while len(timings) < runs:
         start_x = random.randint(0, N - 1)
         start_y = random.randint(0, M - 1)
 
-        # Check if the generated starting point is unique
         if (start_x, start_y) not in unique_starting_points:
-            # Add to set of used points
             unique_starting_points.add((start_x, start_y))
 
-            start_time = time.time()
-            # Run the knight's tour
-            knights_tour(N, M, visualize, start_x, start_y)
-            end_time = time.time()
+            elapsed_time = knights_tour(N, M, visualize, start_x, start_y)
+            if elapsed_time is not None:
+                timings.append((elapsed_time, (start_x, start_y), N, M))
 
-            # Record the timing along with the starting point
-            timings.append((end_time - start_time, (start_x, start_y)))
-
-    # Sort timings
     timings.sort(key=lambda x: x[0])
 
-    # Print the results
+    # Prepare data for plotting
+    execution_times = [timing[0] for timing in timings]
+    starting_points = [f"({timing[1][0]}, {timing[1][1]})" for timing in timings]
+
+    plt.figure(figsize=(10, 5))
+
+    # Plot with numerical indices on the x-axis
+    x_indices = list(range(len(starting_points)))
+    plt.scatter(x_indices, execution_times, marker='o', color='b')
+
+    # Annotate points with starting coordinates
+    for i, start_point in enumerate(starting_points):
+        plt.annotate(start_point, (x_indices[i], execution_times[i]),
+                     textcoords="offset points", xytext=(0, 5), ha='center')
+
+    # Add labels and title
+    plt.title(f'Knight\'s Tour Timing Analysis for {N}x{M} Board')
+    plt.xlabel('Starting Points (Index)')
+    plt.ylabel('Time (seconds)')
+    plt.xticks(x_indices, starting_points, rotation=45)
+    plt.grid()
+    plt.tight_layout()  # Adjust layout for better fit
+    plt.show()
+
+    # Print sorted timings
     print("Timings for each run (sorted):")
-    for i, (timing, point) in enumerate(timings):
-        print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {N}x{M}, Starting Point = {point}")
+    for i, (timing, point, n, m) in enumerate(timings):
+        print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = {point}")
+
 
 # Main function to handle command-line input and start the knight's tour
 def main():
