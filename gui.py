@@ -329,17 +329,17 @@ class ChessBoard():
         self.populateButtons()
     
 # Test Method
-# def main():
-#     root = tk.Tk()
-#     root.title("Knight's Tour Visualization")
-#     root.minsize(width=400, height=400)
-#     root.configure(background="papaya whip")
+def main():
+    root = tk.Tk()
+    root.title("Knight's Tour Visualization")
+    root.minsize(width=400, height=400)
+    root.configure(background="papaya whip")
     
-#     chessBoard = ChessBoard(3, 3, root, example_no_sol_input)
-#     chessBoard.runVisualization()
+    chessBoard = ChessBoard(3, 3, root, example_no_sol_input)
+    chessBoard.runVisualization()
     
-#     root.mainloop()
+    root.mainloop()
 
     
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
