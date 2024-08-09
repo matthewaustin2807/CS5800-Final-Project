@@ -82,7 +82,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
 
     # Sort the possible moves by the count of subsequent valid moves (Warnsdorff's heuristic)
     possible_moves.sort()
-
+   
     # Try all possible moves for the knight
     for _, next_x, next_y in possible_moves:
         board[next_x][next_y] = move_i
@@ -93,6 +93,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
         # Backtracking
         board[next_x][next_y] = -1
         print("Backtracking from ({}, {}) at move {}".format(next_x, next_y, move_i))  # Debugging statement
+        all_knight_moves.append('backtrack')
 
     return False
 
@@ -118,11 +119,13 @@ def knights_tour(N, M, visualize, start_x=0, start_y=0):
 
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
+        print(all_knight_moves)
     else:
         print_solution(board, N, M)
-        if visualize:
-            print("Solution Exists, Visualizing...")
-            visualize_algorithm(all_knight_moves, N, M)
+    
+    if visualize:
+        print("Visualizing...")
+        visualize_algorithm(all_knight_moves, N, M)
 
 # Function to print the solution board
 def print_solution(board, N, M):
