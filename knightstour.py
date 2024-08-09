@@ -8,9 +8,7 @@ import sys
 import time
 import tkinter as tk
 import random
-
 from matplotlib import pyplot as plt
-
 from gui import ChessBoard, squareSize
 
 def visualize_algorithm(all_knight_moves, n, m):
