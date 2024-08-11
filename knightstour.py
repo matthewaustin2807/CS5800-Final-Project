@@ -1,5 +1,5 @@
-# Theresa Fu-Hsing Hsu, Matthew Chandra
-# CS5800
+# Theresa Fu-Hsing Hsu, Matthew Chandra, Zuoyin Chen
+# CS5800 Final Project
 # Summer 2024
 # Bruce Maxwell
 # Knight's Tour problem using backtracking in Python.
@@ -12,12 +12,12 @@ from matplotlib import pyplot as plt
 from gui import ChessBoard, squareSize
 
 def visualize_algorithm(all_knight_moves, n, m):
-    """Visualize the Knights Tour Algorithm using Tkinter
+    """Visualize the Knight's Tour Algorithm using Tkinter.
 
     Args:
-        all_knight_moves (list): A list of coordinates of all of the knight's move in order from the starting position
-        n (int): Number of Rows on the Board
-        m (int): Number of Columns on the Board
+        all_knight_moves (list): A list of coordinates of all of the knight's move in order from the starting position.
+        n (int): Number of Rows on the Board.
+        m (int): Number of Columns on the Board.
     """
     root = tk.Tk()
     root.title("Knight's Tour Visualization")
@@ -29,24 +29,6 @@ def visualize_algorithm(all_knight_moves, n, m):
 
     root.mainloop()
 
-def visualize_algorithm(all_knight_moves, n, m):
-    """Visualize the Knights Tour Algorithm using Tkinter
-
-    Args:
-        all_knight_moves (list): A list of coordinates of all of the knight's move in order from the starting position
-        n (int): Number of Rows on the Board
-        m (int): Number of Columns on the Board
-    """
-    root = tk.Tk()
-    root.title(f"Knight's Tour Visualization")
-    root.minsize(width=squareSize*m+100, height=squareSize*n+100)
-    root.configure(background="papaya whip")
-    
-    chessBoard = ChessBoard(n, m, root,all_knight_moves)
-    chessBoard.runVisualization()
-    
-    root.mainloop()
-    
 # Function to check if (x, y) is a valid move for the knight
 def is_valid_move(x, y, board, N, M):
     """Check if the move to position (x, y) is valid.
@@ -103,18 +85,16 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
 
     # Sort the possible moves by the count of subsequent valid moves (Warnsdorff's heuristic)
     possible_moves.sort()
-   
+
     # Try all possible moves for the knight
     for _, next_x, next_y in possible_moves:
         board[next_x][next_y] = move_i
-        print("Move {}: ({}, {})".format(move_i, next_x, next_y))  # Debugging statement
         all_knight_moves.append([next_x, next_y])
         if solve_knights_tour(next_x, next_y, move_i + 1, board, N, M, x_move, y_move, all_knight_moves):
             return True
         # Backtracking
         board[next_x][next_y] = -1
-        print("Backtracking from ({}, {}) at move {}".format(next_x, next_y, move_i))  # Debugging statement
-        all_knight_moves.append('backtrack')
+        all_knight_moves.pop()  # Remove the move as it led to a dead end
 
     return False
 
@@ -142,9 +122,6 @@ def knights_tour(N, M, visualize, start_x=0, start_y=0):
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
         print(all_knight_moves)
-        if visualize:
-            print("Solution Exists, Visualizing...")
-            visualize_algorithm(all_knight_moves, N, M)
     else:
         end_time = time.time()
         print_solution(board, N, M)
@@ -168,7 +145,6 @@ def print_solution(board, N, M):
         for j in range(M):
             sys.stdout.write("{:2} ".format(board[i][j]))
         sys.stdout.write("\n")
-
 
 # Function to analyze and plot running time
 def analyze_knights_tour(N, M, visualize, x, y, runs=10):
@@ -211,11 +187,6 @@ def analyze_knights_tour(N, M, visualize, x, y, runs=10):
     x_indices = list(range(len(starting_points)))
     plt.scatter(x_indices, execution_times, marker='o', color='b')
     plt.plot(x_indices, execution_times, color='b', linestyle='-', alpha=0.5)  # Add lines
-
-    # Remove annotations of starting points
-    # for i, start_point in enumerate(starting_points):
-    #     plt.annotate(start_point, (x_indices[i], execution_times[i]),
-    #                  textcoords="offset points", xytext=(0, 5), ha='center')
 
     # Add labels and title
     plt.title(f'Knight\'s Tour Timing Analysis for {N}x{M} Board (Different Starting Points)')
@@ -264,7 +235,6 @@ def analyze_knights_tour(N, M, visualize, x, y, runs=10):
     for i, (timing, n, m) in enumerate(size_timings):
         print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = ({x}, {y})")
 
-
 # Main function to handle command-line input and start the knight's tour
 def main():
     """Main function to parse command-line arguments and start the Knight's Tour."""
@@ -287,7 +257,7 @@ def main():
     elif run_mode == 1:
         # Run the timing analysis
         analyze_knights_tour(N, M, visualization, x, y, runs=10)
-
+    
     else:
         print("Invalid run mode. Use 0 for single run and 1 for analysis.")
         sys.exit(1)
