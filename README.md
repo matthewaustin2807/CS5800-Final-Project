@@ -30,7 +30,7 @@ python knightstour.py <rows> <columns> <start_x> <start_y> <0 for visual, 1 for 
 python knightstour.py 8 8 2 2 0
 ```
 
-- **Timing Analysis Mode**: To run the Knight's Tour on a 5x7 board starting from position (0, 0) with timing analysis enabled:
+- **Timing Analysis Mode**: To run the Knight's Tour on a 5x7 board starting from position (2, 2) with timing analysis enabled:
 ```sh
 python knightstour.py 5 7 2 2 1
 ```
