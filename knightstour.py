@@ -242,14 +242,14 @@ def analyze_knights_tour(N, M, x, y, runs=10):
 def main():
     """Main function to parse command-line arguments and start the Knight's Tour."""
     if len(sys.argv) < 6:
-        print("Usage: python knightstour.py <rows> <cols> <start_x> <start_y> <0 for no Visualization, 1 for Visualization> <0 for single run, 1 for analysis>")
+        print("Usage: python knightstour.py <rows> <cols> <start_x> <start_y> <0 for Visualization, 1 for Timing>")
         sys.exit(1)
 
     N = int(sys.argv[1])
     M = int(sys.argv[2])
     x = int(sys.argv[3])
     y = int(sys.argv[4])
-    run_mode = int(sys.argv[6])  # 0 for single run, 1 for analysis
+    run_mode = int(sys.argv[5])  # 0 for single run, 1 for analysis
 
     print("Board size: {}x{}, Starting position: ({}, {})".format(N, M, x, y))
 
