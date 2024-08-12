@@ -94,7 +94,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
             return True
         # Backtracking
         board[next_x][next_y] = -1
-        all_knight_moves.pop()  # Remove the move as it led to a dead end
+        all_knight_moves.append("backtrack")  # Remove the move as it led to a dead end
 
     return False
 
