@@ -122,6 +122,9 @@ def knights_tour(N, M, visualize, start_x=0, start_y=0):
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
         print(all_knight_moves)
+        if visualize:
+            print("Solution Does Not Exists, Visualizing...")
+            visualize_algorithm(all_knight_moves, N, M)
     else:
         end_time = time.time()
         print_solution(board, N, M)
