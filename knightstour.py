@@ -99,7 +99,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
     return False
 
 # Function to initialize and solve the Knight's Tour problem
-def knights_tour(N, M, visualize, start_x=0, start_y=0):
+def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
     """Initialize the board and start the Knight's Tour.
 
     Args:
@@ -150,7 +150,7 @@ def print_solution(board, N, M):
         sys.stdout.write("\n")
 
 # Function to analyze and plot running time
-def analyze_knights_tour(N, M, visualize, x, y, runs=10):
+def analyze_knights_tour(N, M, x, y, runs=10):
     """Analyze the Knight's Tour by running multiple trials and plotting the timing results.
 
     Args:
@@ -174,7 +174,7 @@ def analyze_knights_tour(N, M, visualize, x, y, runs=10):
         if (start_x, start_y) not in unique_starting_points:
             unique_starting_points.add((start_x, start_y))
 
-            elapsed_time = knights_tour(N, M, visualize, start_x, start_y)
+            elapsed_time = knights_tour(N=N, M=M, start_x=start_x, start_y=start_y)
             if elapsed_time is not None:
                 timings.append((elapsed_time, (start_x, start_y), N, M))
 
@@ -204,7 +204,7 @@ def analyze_knights_tour(N, M, visualize, x, y, runs=10):
     size_timings = []
 
     for size in range(1, 11):
-        elapsed_time = knights_tour(size, size, visualize, x, y)
+        elapsed_time = knights_tour(size, size, x, y)
         if elapsed_time is not None:
             size_timings.append((elapsed_time, size, size))
         else:
@@ -249,17 +249,16 @@ def main():
     M = int(sys.argv[2])
     x = int(sys.argv[3])
     y = int(sys.argv[4])
-    visualization = True if int(sys.argv[5]) == 1 else False
     run_mode = int(sys.argv[6])  # 0 for single run, 1 for analysis
 
     print("Board size: {}x{}, Starting position: ({}, {})".format(N, M, x, y))
 
     if run_mode == 0:
-        # Single run of the Knight's Tour
-        knights_tour(N, M, visualization, x, y)
+        # Single run of the Knight's Tour with Visualization
+        knights_tour(N, M, x, y, visualize=True)
     elif run_mode == 1:
-        # Run the timing analysis
-        analyze_knights_tour(N, M, visualization, x, y, runs=10)
+        # Run the timing analysis without Visualization
+        analyze_knights_tour(N, M, x, y, runs=10)
     
     else:
         print("Invalid run mode. Use 0 for single run and 1 for analysis.")
