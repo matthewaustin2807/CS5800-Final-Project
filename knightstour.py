@@ -270,7 +270,7 @@ def main():
         # Single run of the Knight's Tour with Timing Analysis
         knights_tour(N, M, visualize=False)
     else:
-        print("Invalid mode. Use 0 for visual and 1 for timing analysis.")
+        print("Invalid mode. Use 0 for visualization and 1 for timing analysis.")
         sys.exit(1)
 
 if __name__ == "__main__":
