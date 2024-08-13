@@ -45,8 +45,6 @@ class ChessBoard:
         self.image_label = None
         self.paused = False
         self.iter = -1
-        self.backtrackIter = 0
-        self.backtrackStart = 0
     
     def setupMoves(self):
         """Set the series of moves to be made by the visualization program
