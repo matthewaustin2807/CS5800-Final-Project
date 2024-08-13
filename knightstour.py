@@ -111,7 +111,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
             return True
         # Backtracking
         board[next_x][next_y] = -1
-        all_knight_moves.pop()
+        all_knight_moves.append('backtrack')
 
     return False
 
@@ -146,8 +146,8 @@ def knights_tour(N, M, visualize=False):
         print_solution(board, N, M)
         elapsed_time = end_time - start_time
         print(f"Time taken: {elapsed_time:.4f} seconds")
-        if visualize:
-            visualize_algorithm(all_knight_moves, N, M)
+    if visualize:
+        visualize_algorithm(all_knight_moves, N, M)
 
 # Function to print the solution board
 def print_solution(board, N, M):
