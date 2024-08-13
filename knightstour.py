@@ -59,6 +59,7 @@ def is_valid_move(x, y, board, N, M):
 
 # Function to count the number of valid moves from position (x, y)
 def count_valid_moves(x, y, board, N, M, x_move, y_move):
+    """Count the number of valid moves from the current position."""
     count = 0
     for i in range(8):
         if is_valid_move(x + x_move[i], y + y_move[i], board, N, M):
@@ -95,6 +96,10 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
             count = count_valid_moves(next_x, next_y, board, N, M, x_move, y_move)
             possible_moves.append((count, next_x, next_y))
 
+    # If no possible moves are available, return False (trigger backtracking)
+    if not possible_moves:
+        return False
+
     # Sort the possible moves by the count of subsequent valid moves (Warnsdorff's heuristic)
     possible_moves.sort()
 
@@ -104,7 +109,7 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
         all_knight_moves.append([next_x, next_y])
         if solve_knights_tour(next_x, next_y, move_i + 1, board, N, M, x_move, y_move, all_knight_moves):
             return True
-        # Backtracking: reset the move and remove it from the list
+        # Backtracking
         board[next_x][next_y] = -1
         all_knight_moves.pop()
 
@@ -133,9 +138,6 @@ def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
     start_time = time.time()
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
-        if visualize:
-            print("Solution Does Not Exist, Visualizing...")
-            visualize_algorithm(all_knight_moves, N, M)
     else:
         end_time = time.time()
         print_solution(board, N, M)
