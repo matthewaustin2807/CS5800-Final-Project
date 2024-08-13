@@ -104,9 +104,9 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
         all_knight_moves.append([next_x, next_y])
         if solve_knights_tour(next_x, next_y, move_i + 1, board, N, M, x_move, y_move, all_knight_moves):
             return True
-        # Backtracking
+        # Backtracking: reset the move and remove it from the list
         board[next_x][next_y] = -1
-        all_knight_moves.append("backtrack")  # Add a backtrack flag to visualize backtracking
+        all_knight_moves.pop()
 
     return False
 
@@ -133,9 +133,8 @@ def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
     start_time = time.time()
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
-        print(all_knight_moves)
         if visualize:
-            print("Solution Does Not Exists, Visualizing...")
+            print("Solution Does Not Exist, Visualizing...")
             visualize_algorithm(all_knight_moves, N, M)
     else:
         end_time = time.time()
