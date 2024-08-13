@@ -9,7 +9,6 @@ The algorithm uses a depth-first search (DFS) approach with backtracking to expl
 ## Inputs and Outputs
 ### Inputs
 - **Board size (N x M)**: N and M are integers representing the number of rows and columns respectively.
-- **Starting position of the knight (start_x, start_y)**: Optional, default is (0, 0).
 - **Mode flag**: 0 for visualization, 1 for timing analysis.
 
 ### Outputs
@@ -21,18 +20,18 @@ The algorithm uses a depth-first search (DFS) approach with backtracking to expl
 To run the Knight's Tour algorithm, use the following command format:
 
 ```sh
-python knightstour.py <rows> <columns> <start_x> <start_y> <0 for visual, 1 for time>
+python knightstour.py <rows> <columns> <0 for visualization, 1 for timing analysis>
 ```
 
 ### Example Commands
-- **Visualization Mode**: To run the Knight's Tour on an 8x8 board starting from position (2, 2) with visualization enabled:
+- **Visualization Mode**: To run the Knight's Tour on an 8x8 board with visualization enabled:
 ```sh
-python knightstour.py 8 8 2 2 0
+python knightstour.py 8 8 0
 ```
 
-- **Timing Analysis Mode**: To run the Knight's Tour on a 5x7 board starting from position (2, 2) with timing analysis enabled:
+- **Timing Analysis Mode**: To run the Knight's Tour on a 5x7 board with timing analysis enabled:
 ```sh
-python knightstour.py 5 7 2 2 1
+python knightstour.py 8 8 1
 ```
 
 ## Implementation

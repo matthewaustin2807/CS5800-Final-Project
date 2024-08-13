@@ -116,21 +116,24 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
     return False
 
 # Function to initialize and solve the Knight's Tour problem
-def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
+def knights_tour(N, M, visualize=False):
     """Initialize the board and start the Knight's Tour.
 
     Args:
         N (int): The number of rows of the board.
         M (int): The number of columns of the board.
-        start_x (int): The starting x-coordinate of the knight.
-        start_y (int): The starting y-coordinate of the knight.
+        visualize (bool): Whether to visualize the Knight's Tour using Tkinter.
     """
-    print("Starting Knight's Tour on a {}x{} board from position ({}, {})".format(N, M, start_x, start_y))
+    print("Starting Knight's Tour on a {}x{} board".format(N, M))
+
     # Initialize the board with -1
     board = [[-1 for _ in range(M)] for _ in range(N)]
+
     # Initial position of the knight
+    start_x, start_y = 0, 0
     board[start_x][start_y] = 0
     all_knight_moves = [[start_x, start_y]]
+
     # All possible moves for the knight
     x_move = [2, 1, -1, -2, -2, -1, 1, 2]
     y_move = [1, 2, 2, 1, -1, -2, -2, -1]
@@ -144,9 +147,7 @@ def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
         elapsed_time = end_time - start_time
         print(f"Time taken: {elapsed_time:.4f} seconds")
         if visualize:
-            print("Solution Exists, Visualizing...")
             visualize_algorithm(all_knight_moves, N, M)
-        return elapsed_time  # Return the elapsed time
 
 # Function to print the solution board
 def print_solution(board, N, M):
@@ -159,7 +160,7 @@ def print_solution(board, N, M):
     """
     for i in range(N):
         for j in range(M):
-            sys.stdout.write("{:2} ".format(board[i][j]))
+            sys.stdout.write(f"{board[i][j]:2} ")
         sys.stdout.write("\n")
 
 # Function to analyze and plot running time
@@ -254,27 +255,22 @@ def analyze_knights_tour(N, M, x, y, runs=10):
 # Main function to handle command-line input and start the knight's tour
 def main():
     """Main function to parse command-line arguments and start the Knight's Tour."""
-    if len(sys.argv) < 6:
-        print("Usage: python knightstour.py <rows> <cols> <start_x> <start_y> <0 for Visualization, 1 for Timing>")
+    if len(sys.argv) < 4:
+        print("Usage: python knightstour.py <rows> <cols> <0 for visualization, 1 for timing analysis>")
         sys.exit(1)
 
     N = int(sys.argv[1])
     M = int(sys.argv[2])
-    x = int(sys.argv[3])
-    y = int(sys.argv[4])
-    run_mode = int(sys.argv[5])  # 0 for single run, 1 for analysis
+    mode = int(sys.argv[3])
 
-    print("Board size: {}x{}, Starting position: ({}, {})".format(N, M, x, y))
-
-    if run_mode == 0:
+    if mode == 0:
         # Single run of the Knight's Tour with Visualization
-        knights_tour(N, M, x, y, visualize=True)
-    elif run_mode == 1:
-        # Run the timing analysis without Visualization
-        analyze_knights_tour(N, M, x, y, runs=10)
-    
+        knights_tour(N, M, visualize=True)
+    elif mode == 1:
+        # Single run of the Knight's Tour with Timing Analysis
+        knights_tour(N, M, visualize=False)
     else:
-        print("Invalid run mode. Use 0 for single run and 1 for analysis.")
+        print("Invalid mode. Use 0 for visual and 1 for timing analysis.")
         sys.exit(1)
 
 if __name__ == "__main__":
