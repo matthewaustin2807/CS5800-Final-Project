@@ -11,6 +11,7 @@ import random
 from matplotlib import pyplot as plt
 from gui import ChessBoard, squareSize
 
+# Function to visualize the Knight's Tour Algorithm using Tkinter
 def visualize_algorithm(all_knight_moves, n, m):
     """Visualize the Knight's Tour Algorithm using Tkinter.
 
@@ -19,14 +20,25 @@ def visualize_algorithm(all_knight_moves, n, m):
         n (int): Number of Rows on the Board.
         m (int): Number of Columns on the Board.
     """
+    # Initialize the main Tkinter window
     root = tk.Tk()
+
+    # Set the title of the window
     root.title("Knight's Tour Visualization")
+    
+    # Set the minimum size of the window based on the board dimensions and square size
     root.minsize(width=squareSize * m + 100, height=squareSize * n + 100)
+    
+    # Configure the background color of the window
     root.configure(background="papaya whip")
 
+    # Create an instance of the ChessBoard class and pass the required parameters
     chessBoard = ChessBoard(n, m, root, all_knight_moves)
+    
+    # Run the visualization of the Knight's Tour
     chessBoard.runVisualization()
 
+    # Start the Tkinter main loop to display the window
     root.mainloop()
 
 # Function to check if (x, y) is a valid move for the knight
