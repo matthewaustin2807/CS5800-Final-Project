@@ -146,6 +146,7 @@ def knights_tour(N, M, visualize=False):
         print_solution(board, N, M)
         elapsed_time = end_time - start_time
         print(f"Time taken: {elapsed_time:.4f} seconds")
+        return end_time - start_time
     if visualize:
         visualize_algorithm(all_knight_moves, N, M)
 
@@ -164,93 +165,53 @@ def print_solution(board, N, M):
         sys.stdout.write("\n")
 
 # Function to analyze and plot running time
-def analyze_knights_tour(N, M, x, y, runs=10):
+def analyze_knights_tour(N, M, runs=10):
     """Analyze the Knight's Tour by running multiple trials and plotting the timing results.
 
     Args:
         N (int): The number of rows of the board.
         M (int): The number of columns of the board.
-        visualize (bool): Flag indicating whether to visualize the knight's tour.
-        x (int): The x-coordinate of the starting position for increasing board size analysis.
-        y (int): The y-coordinate of the starting position for increasing board size analysis.
         runs (int): The number of runs to perform (default is 10).
     """
-
-    # ------------------------- Analysis with Different Starting Points ------------------------- #
-    timings = []
-    unique_starting_points = set()
-
-    # Pick random unique starting points
-    while len(timings) < runs:
-        start_x = random.randint(0, N - 1)
-        start_y = random.randint(0, M - 1)
-
-        if (start_x, start_y) not in unique_starting_points:
-            unique_starting_points.add((start_x, start_y))
-
-            elapsed_time = knights_tour(N=N, M=M, start_x=start_x, start_y=start_y)
-            if elapsed_time is not None:
-                timings.append((elapsed_time, (start_x, start_y), N, M))
-
-    timings.sort(key=lambda x: x[0])
-
-    # Prepare data for plotting different starting points
-    execution_times = [timing[0] for timing in timings]
-    starting_points = [f"({timing[1][0]}, {timing[1][1]})" for timing in timings]
-
-    plt.figure(figsize=(10, 5))
-
-    # Plot with numerical indices on the x-axis
-    x_indices = list(range(len(starting_points)))
-    plt.scatter(x_indices, execution_times, marker='o', color='b')
-    plt.plot(x_indices, execution_times, color='b', linestyle='-', alpha=0.5)  # Add lines
-
-    # Add labels and title
-    plt.title(f'Knight\'s Tour Timing Analysis for {N}x{M} Board (Different Starting Points)')
-    plt.xlabel('Starting Points (Index)')
-    plt.ylabel('Time (seconds)')
-    plt.xticks(x_indices, starting_points, rotation=45)
-    plt.grid()
-    plt.tight_layout()  # Adjust layout for better fit
-    plt.show()
-
     # ------------------------- Analysis with Increasing Board Sizes ------------------------- #
     size_timings = []
 
-    for size in range(1, 11):
-        elapsed_time = knights_tour(size, size, x, y)
-        if elapsed_time is not None:
-            size_timings.append((elapsed_time, size, size))
-        else:
-            size_timings.append((0, size, size))  # Add a placeholder for missing data
+    for size in range(1, 21):  # Range 1-21 for 20 sizes
+        total_time = 0
+        for _ in range(runs):
+            elapsed_time = knights_tour(size, size)
+            if elapsed_time is not None:
+                total_time += elapsed_time
+            else:
+                total_time += 0
+
+        average_time = total_time / runs  # Calculate average time for the size
+        size_timings.append((average_time, size, size))
 
     # Prepare data for plotting
-    valid_sizes = range(1, 11)  # Ensures we plot all sizes 1 through 10
+    valid_sizes = range(1, 21)  # Plot all sizes 1 through 20
     size_execution_times = [timing[0] for timing in size_timings]
     board_sizes = [f"{timing[1]}x{timing[2]}" for timing in size_timings]
 
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(12, 6))  # Adjusted figure size for better readability
 
     # Plot with board sizes on the x-axis
     plt.plot(valid_sizes, size_execution_times, marker='o', color='g')
 
     # Add labels and title
     plt.title('Knight\'s Tour Timing Analysis (Same Starting Point, Increasing Board Size)')
-    plt.xlabel('Board Size (NxN)')
+    plt.xlabel('Board Size (NxM)')
     plt.ylabel('Time (seconds)')
     plt.xticks(valid_sizes, board_sizes)
     plt.grid()
     plt.tight_layout()  # Adjust layout for better fit
     plt.show()
 
-    # ------------------------- Print Timings for Both Analyses ------------------------- #
-    print("Timings for each run (sorted for different starting points):")
-    for i, (timing, point, n, m) in enumerate(timings):
-        print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = {point}")
-
+    # ------------------------- Print Timings for the Analyses ------------------------- #
     print("\nTimings for increasing board sizes (sorted):")
     for i, (timing, n, m) in enumerate(size_timings):
         print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = ({x}, {y})")
+
 
 # Main function to handle command-line input and start the knight's tour
 def main():
@@ -267,8 +228,8 @@ def main():
         # Single run of the Knight's Tour with Visualization
         knights_tour(N, M, visualize=True)
     elif mode == 1:
-        # Single run of the Knight's Tour with Timing Analysis
-        knights_tour(N, M, visualize=False)
+        # Multiple run of the Knight's Tour with Timing Analysis
+        analyze_knights_tour(N, M, runs=10)
     else:
         print("Invalid mode. Use 0 for visualization and 1 for timing analysis.")
         sys.exit(1)
