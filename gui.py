@@ -196,15 +196,15 @@ class ChessBoard:
             # display backtracking message
             self.displayBacktrackingMessage(display=True)
             
-            # remove all widgets from the grid we are backtracking to
+            # Remove all widgets from the grid we are backtracking to
             self.board_state[self.prevGrid[0]][self.prevGrid[1]]['knight_icon'].destroy()
             self.board_state[self.prevGrid[0]][self.prevGrid[1]]['moveNumber_icon'].destroy()
             self.board_state[move[0]][move[1]]['moveNumber_icon'].destroy()
         else:
-            # if not, remove backtracking message
+            # If not, remove backtracking message
             self.displayBacktrackingMessage(False)   
         
-        # fill in the knight at the correct grid and destroy any existing widgets on that square
+        # Fill in the knight at the correct grid and destroy any existing widgets on that square
         if 'knight_icon' in self.board_state[move[0]][move[1]]:
             self.board_state[move[0]][move[1]]['knight_icon'].destroy()
         if 'moveNumber_icon' in self.board_state[move[0]][move[1]]:
