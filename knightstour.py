@@ -141,14 +141,16 @@ def knights_tour(N, M, visualize=False):
     start_time = time.time()
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
+        elapsed_time = None
     else:
         end_time = time.time()
         print_solution(board, N, M)
         elapsed_time = end_time - start_time
         print(f"Time taken: {elapsed_time:.4f} seconds")
-        return end_time - start_time
-    if visualize:
-        visualize_algorithm(all_knight_moves, N, M)
+        if visualize:
+            visualize_algorithm(all_knight_moves, N, M)
+    
+    return elapsed_time
 
 # Function to print the solution board
 def print_solution(board, N, M):
@@ -208,10 +210,10 @@ def analyze_knights_tour(N, M, runs=10):
     plt.show()
 
     # ------------------------- Print Timings for the Analyses ------------------------- #
-    print("\nTimings for increasing board sizes (sorted):")
+    # Print timings for each size
+    print("\nTimings for increasing board sizes:")
     for i, (timing, n, m) in enumerate(size_timings):
-        print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = ({x}, {y})")
-
+        print(f"Board Size = {n}x{m}, Average Time = {timing:.4f} seconds")
 
 # Main function to handle command-line input and start the knight's tour
 def main():
