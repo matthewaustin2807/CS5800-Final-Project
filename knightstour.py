@@ -7,10 +7,8 @@
 import sys
 import time
 import tkinter as tk
-import random
 from matplotlib import pyplot as plt
 from gui import ChessBoard, squareSize
-
 
 # Function to visualize the Knight's Tour Algorithm using Tkinter
 def visualize_algorithm(all_knight_moves, n, m):
@@ -26,22 +24,21 @@ def visualize_algorithm(all_knight_moves, n, m):
 
     # Set the title of the window
     root.title("Knight's Tour Visualization")
-
+    
     # Set the minimum size of the window based on the board dimensions and square size
     root.minsize(width=squareSize * m + 100, height=squareSize * n + 100)
-
+    
     # Configure the background color of the window
     root.configure(background="papaya whip")
 
     # Create an instance of the ChessBoard class and pass the required parameters
     chessBoard = ChessBoard(n, m, root, all_knight_moves)
-
+    
     # Run the visualization of the Knight's Tour
     chessBoard.runVisualization()
 
     # Start the Tkinter main loop to display the window
     root.mainloop()
-
 
 # Function to check if (x, y) is a valid move for the knight
 def is_valid_move(x, y, board, N, M):
@@ -59,15 +56,14 @@ def is_valid_move(x, y, board, N, M):
     """
     return 0 <= x < N and 0 <= y < M and board[x][y] == -1
 
-
 # Function to count the number of valid moves from position (x, y)
 def count_valid_moves(x, y, board, N, M, x_move, y_move):
+    """Count the number of valid moves from the current position."""
     count = 0
     for i in range(8):
         if is_valid_move(x + x_move[i], y + y_move[i], board, N, M):
             count += 1
     return count
-
 
 # Recursive function to solve the Knight's Tour problem
 def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_moves):
@@ -99,6 +95,10 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
             count = count_valid_moves(next_x, next_y, board, N, M, x_move, y_move)
             possible_moves.append((count, next_x, next_y))
 
+    # If no possible moves are available, return False (trigger backtracking)
+    if not possible_moves:
+        return False
+
     # Sort the possible moves by the count of subsequent valid moves (Warnsdorff's heuristic)
     possible_moves.sort()
 
@@ -108,29 +108,31 @@ def solve_knights_tour(x, y, move_i, board, N, M, x_move, y_move, all_knight_mov
         all_knight_moves.append([next_x, next_y])
         if solve_knights_tour(next_x, next_y, move_i + 1, board, N, M, x_move, y_move, all_knight_moves):
             return True
-        # Backtracking: reset the move and remove it from the list
+        # Backtracking
         board[next_x][next_y] = -1
-        all_knight_moves.pop()
+        all_knight_moves.append('backtrack')
 
     return False
 
-
 # Function to initialize and solve the Knight's Tour problem
-def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
+def knights_tour(N, M, visualize=False):
     """Initialize the board and start the Knight's Tour.
 
     Args:
         N (int): The number of rows of the board.
         M (int): The number of columns of the board.
-        start_x (int): The starting x-coordinate of the knight.
-        start_y (int): The starting y-coordinate of the knight.
+        visualize (bool): Whether to visualize the Knight's Tour using Tkinter.
     """
-    print("Starting Knight's Tour on a {}x{} board from position ({}, {})".format(N, M, start_x, start_y))
+    print("Starting Knight's Tour on a {}x{} board".format(N, M))
+
     # Initialize the board with -1
     board = [[-1 for _ in range(M)] for _ in range(N)]
+
     # Initial position of the knight
+    start_x, start_y = 0, 0
     board[start_x][start_y] = 0
     all_knight_moves = [[start_x, start_y]]
+
     # All possible moves for the knight
     x_move = [2, 1, -1, -2, -2, -1, 1, 2]
     y_move = [1, 2, 2, 1, -1, -2, -2, -1]
@@ -138,19 +140,14 @@ def knights_tour(N, M, start_x=0, start_y=0, visualize=False):
     start_time = time.time()
     if not solve_knights_tour(start_x, start_y, 1, board, N, M, x_move, y_move, all_knight_moves):
         print("Solution does not exist")
-        if visualize:
-            print("Solution Does Not Exist, Visualizing...")
-            visualize_algorithm(all_knight_moves, N, M)
     else:
         end_time = time.time()
         print_solution(board, N, M)
         elapsed_time = end_time - start_time
         print(f"Time taken: {elapsed_time:.4f} seconds")
-        if visualize:
-            print("Solution Exists, Visualizing...")
-            visualize_algorithm(all_knight_moves, N, M)
-        return elapsed_time  # Return the elapsed time
-
+        return end_time - start_time
+    if visualize:
+        visualize_algorithm(all_knight_moves, N, M)
 
 # Function to print the solution board
 def print_solution(board, N, M):
@@ -163,147 +160,77 @@ def print_solution(board, N, M):
     """
     for i in range(N):
         for j in range(M):
-            sys.stdout.write("{:2} ".format(board[i][j]))
+            sys.stdout.write(f"{board[i][j]:2} ")
         sys.stdout.write("\n")
 
-# Function to perform timing analysis with 5 parameters
-def analyze_knights_tour(N, M, start_x=0, start_y=0, runs=10):
+# Function to analyze and plot running time
+def analyze_knights_tour(N, M, runs=10):
     """Analyze the Knight's Tour by running multiple trials and plotting the timing results.
 
     Args:
         N (int): The number of rows of the board.
         M (int): The number of columns of the board.
-        start_x (int): The x-coordinate of the starting position for increasing board size analysis.
-        start_y (int): The y-coordinate of the starting position for increasing board size analysis.
         runs (int): The number of runs to perform (default is 10).
     """
+    # ------------------------- Analysis with Increasing Board Sizes ------------------------- #
+    size_timings = []
 
-    original_start_x, original_start_y = start_x, start_y  # Store original starting point
+    for size in range(1, 21):  # Range 1-21 for 20 sizes
+        total_time = 0
+        for _ in range(runs):
+            elapsed_time = knights_tour(size, size)
+            if elapsed_time is not None:
+                total_time += elapsed_time
+            else:
+                total_time += 0
 
-    # ------------------------- Analysis with Different Starting Points ------------------------- #
-    timings = []
-    unique_starting_points = set()
+        average_time = total_time / runs  # Calculate average time for the size
+        size_timings.append((average_time, size, size))
 
-    # Pick random unique starting points
-    while len(timings) < runs:
-        rand_start_x = random.randint(0, N - 1)
-        rand_start_y = random.randint(0, M - 1)
+    # Prepare data for plotting
+    valid_sizes = range(1, 21)  # Plot all sizes 1 through 20
+    size_execution_times = [timing[0] for timing in size_timings]
+    board_sizes = [f"{timing[1]}x{timing[2]}" for timing in size_timings]
 
-        if (rand_start_x, rand_start_y) not in unique_starting_points:
-            unique_starting_points.add((rand_start_x, rand_start_y))
+    plt.figure(figsize=(12, 6))  # Adjusted figure size for better readability
 
-            # Start the Knight's Tour and get the elapsed time
-            start_time = time.time()  # Start timing
-            success = knights_tour(N=N, M=M, start_x=rand_start_x, start_y=rand_start_y, visualize=False)
-            end_time = time.time()  # End timing
-            elapsed_time = end_time - start_time
+    # Plot with board sizes on the x-axis
+    plt.plot(valid_sizes, size_execution_times, marker='o', color='g')
 
-            # Append to timings whether successful or not
-            timings.append((elapsed_time, (rand_start_x, rand_start_y), N, M, "No solution" if not success else ""))
-
-    # Sort timings based on elapsed time
-    timings.sort(key=lambda x: x[0])
-
-    # Prepare data for plotting different starting points
-    execution_times = [timing[0] for timing in timings if timing[4] == ""]  # Only successful runs
-    starting_points = [f"({timing[1][0]}, {timing[1][1]})" for timing in timings if timing[4] == ""]
-
-    # Plot for different starting points
-    plt.figure(figsize=(10, 5))
-    x_indices = list(range(len(starting_points)))
-    plt.scatter(x_indices, execution_times, marker='o', color='b')
-    plt.plot(x_indices, execution_times, color='b', linestyle='-', alpha=0.5)
-    plt.title(f'Knight\'s Tour Timing Analysis for {N}x{M} Board (Different Starting Points)')
-    plt.xlabel('Starting Points (Index)')
+    # Add labels and title
+    plt.title('Knight\'s Tour Timing Analysis (Same Starting Point, Increasing Board Size)')
+    plt.xlabel('Board Size (NxM)')
     plt.ylabel('Time (seconds)')
-    plt.xticks(x_indices, starting_points, rotation=45)
+    plt.xticks(valid_sizes, board_sizes)
     plt.grid()
-    plt.tight_layout()
+    plt.tight_layout()  # Adjust layout for better fit
     plt.show()
 
-    # ------------------------- Analysis with Increasing Board Sizes ------------------------- #
-    valid_sizes = []  # List to track valid sizes
-    size_execution_times = []  # List to track execution times
-    invalid_sizes = []  # Initialize the list to track invalid sizes
-
-    for size in range(1, 11):
-        # Check if the starting point is valid for the current board size
-        if original_start_x >= size or original_start_y >= size:
-            current_start_x, current_start_y = 0, 0  # Reset to (0, 0) for invalid case
-        else:
-            current_start_x, current_start_y = original_start_x, original_start_y
-
-        # Ensure starting points are within the valid range for the board size
-        if current_start_x < size and current_start_y < size:
-            start_time = time.time()  # Start timing
-            success = knights_tour(size, size, current_start_x, current_start_y, visualize=False)
-            end_time = time.time()  # End timing
-            elapsed_time = end_time - start_time
-
-            if success:
-                size_execution_times.append(elapsed_time)
-                valid_sizes.append(size)  # Append size if solution exists
-            else:
-                size_execution_times.append(elapsed_time)  # Track timing even if no solution
-                invalid_sizes.append((size, current_start_x, current_start_y))  # Track invalid sizes
-
-    # Ensure that we plot only if there are valid sizes
-    if valid_sizes:
-        plt.figure(figsize=(10, 5))
-        plt.plot(valid_sizes, size_execution_times[:len(valid_sizes)], marker='o', color='g')  # Match lengths
-
-        # Add labels and title
-        plt.title('Knight\'s Tour Timing Analysis (Same Starting Point, Increasing Board Size)')
-        plt.xlabel('Board Size (NxN)')
-        plt.ylabel('Time (seconds)')
-        plt.xticks(valid_sizes)
-        plt.grid()
-        plt.tight_layout()
-        plt.show()
-    else:
-        print("No valid board sizes found for plotting.")
-
-    # ------------------------- Print Timings for Both Analyses ------------------------- #
-    print("Timings for each run (sorted for different starting points):")
-    for i, (timing, point, n, m, status) in enumerate(timings):
-        print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = {point}")
-
+    # ------------------------- Print Timings for the Analyses ------------------------- #
     print("\nTimings for increasing board sizes (sorted):")
-    for i, size in enumerate(valid_sizes):
-        if i < len(size_execution_times):
-            print(
-                f"Run {i + 1}: Time = {size_execution_times[i]:.4f} seconds, Board Size = {size}x{size}, Starting Point = ({current_start_x}, {current_start_y})")
-
-    if invalid_sizes:
-        print("\nThe following board sizes do not have solutions:")
-        for size, x, y in invalid_sizes:
-            print(f"Board Size = {size}x{size}, Starting Point = ({current_start_x}, {current_start_y})")
+    for i, (timing, n, m) in enumerate(size_timings):
+        print(f"Run {i + 1}: Time = {timing:.4f} seconds, Board Size = {n}x{m}, Starting Point = (0, 0)")
 
 
 # Main function to handle command-line input and start the knight's tour
 def main():
     """Main function to parse command-line arguments and start the Knight's Tour."""
-    if len(sys.argv) < 6:
-        print("Usage: python knightstour.py <rows> <cols> <start_x> <start_y> <0 for Visualization, 1 for Timing>")
+    if len(sys.argv) < 4:
+        print("Usage: python knightstour.py <rows> <cols> <0 for visualization, 1 for timing analysis>")
         sys.exit(1)
 
     N = int(sys.argv[1])
     M = int(sys.argv[2])
-    x = int(sys.argv[3])
-    y = int(sys.argv[4])
-    run_mode = int(sys.argv[5])  # 0 for single run, 1 for analysis
+    mode = int(sys.argv[3])
 
-    print("Board size: {}x{}, Starting position: ({}, {})".format(N, M, x, y))
-
-    if run_mode == 0:
+    if mode == 0:
         # Single run of the Knight's Tour with Visualization
-        knights_tour(N, M, x, y, visualize=True)
-    elif run_mode == 1:
-        # Run the timing analysis without Visualization
-        analyze_knights_tour(N, M, x, y, runs=10)
-    
+        knights_tour(N, M, visualize=True)
+    elif mode == 1:
+        # Multiple run of the Knight's Tour with Timing Analysis
+        analyze_knights_tour(N, M, runs=10)
     else:
-        print("Invalid run mode. Use 0 for single run and 1 for analysis.")
+        print("Invalid mode. Use 0 for visualization and 1 for timing analysis.")
         sys.exit(1)
 
 if __name__ == "__main__":
